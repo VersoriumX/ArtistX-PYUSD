@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:ns="http://www.versoriumx.com/ArtistX-PYUSD" xmlns:gh="http://www.github.com/VersoriumX/ArtistX-PYUSD">
+    <ns:metadata>
+        <ns:name>VersoriumX</ns:name>
+        <ns:description>A security-focused project for Ethereum and other networks.</ns:description>
+        <ns:version>1.3.6</ns:version>
+    </ns:metadata>
+    <gh:actions>
+        <gh:action>
+            <gh:name>Deploy</gh:name>
+            <gh:branch>ArtistX-PYUSD</gh:branch>
+        </gh:action>
+    </gh:actions>
+</project>
