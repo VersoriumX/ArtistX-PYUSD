@@ -1,5 +1,5 @@
 {
-  "name": "PYUSD",
+  "name": "PYUSD", 
   "version": "0.0.1",
   "description": "PayPal-issued USD-collateralized ERC20 stablecoin",
   "main": "truffle.js",
