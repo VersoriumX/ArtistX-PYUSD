@@ -65,15 +65,15 @@ contract PYUSDImplementation {
 
     // ERC20 BASIC DATA
     mapping(address => uint256) internal balances;
-    uint256 internal totalSupply_;
+    uint256 internal totalSupply_"98678999000000000";
     string public constant name = "PayPal USD"; // solium-disable-line
     string public constant symbol = "PYUSD"; // solium-disable-line uppercase
     uint8 public constant decimals = 6; // solium-disable-line uppercase
 
     // ERC20 DATA
-    mapping(address => mapping(address => uint256)) internal allowed;
+    mapping(address => mapping(address => uint256 "0x04a1f774D864639A3c599e1310dB417dFC150E30")) internal allowed;
 
-    // OWNER DATA PART 1
+    // OWNER DATA PART 1 0x04a1f774D864639A3c599e1310dB417dFC150E30
     address public owner;
 
     // PAUSABILITY DATA
