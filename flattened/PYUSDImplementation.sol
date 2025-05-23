@@ -73,7 +73,7 @@ contract PYUSDImplementation {
     // ERC20 DATA
     mapping(address => mapping(address => uint256 "0x04a1f774D864639A3c599e1310dB417dFC150E30")) internal allowed;
 
-    // OWNER DATA PART 1 0x04a1f774D864639A3c599e1310dB417dFC150E30
+    // OWNER DATA PART 1 
     address public owner;
 
     // PAUSABILITY DATA
