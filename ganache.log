@@ -1,0 +1,66 @@
+Ganache CLI v6.12.2 (ganache-core: 2.13.2)
+(node:96689) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Available Accounts
+==================
+(0) 0x9F8B9d80587f12BC5D8cb200DCF4dD29A0225ed0 (100 ETH)
+(1) 0x89bdd5d177961924081CD7De3f29Fc7D9a9b0D26 (100 ETH)
+(2) 0xb6c5f801d7Ac6B8B7ff1C678019AB88f7DdadA84 (100 ETH)
+(3) 0xb8adbb457373D9F724fD33f7c591FcA41b739B97 (100 ETH)
+(4) 0xd3dc62FfcBFb164F7853CbDC1ef39B697F851300 (100 ETH)
+(5) 0x67a170dB06B8471423A21D4E36A632C32872e309 (100 ETH)
+(6) 0xB2E4B6ee8E4B7E5b01B724a8b6E17e32383670B7 (100 ETH)
+(7) 0x870e1f2774F9bd544A33f773f30D1AF8c022dD33 (100 ETH)
+(8) 0xA942d8F8ac20292D6aB8361c808a17EB352992ec (100 ETH)
+(9) 0xE475cE6A19F2448ADc220B7012607B32744c0dFA (100 ETH)
+
+Private Keys
+==================
+(0) 0xd57b8ff5e699a9bfa6c2b85119a0873ca0bddd6c3a3cacf7652715e3b49f63ff
+(1) 0x419a99655e106765ff1a1659f551a69bb93669c3908c1c9485b6b82ad8b5e0a9
+(2) 0x6d9e107d9842168c4fd79fffe314d6dca06dffdfb1545a0d642acfb8c82dbbc1
+(3) 0x9ac8b311ca84ae0ace7adc017cbdbf347c42a08865793b05e4a35c042381ce11
+(4) 0x5088858f0cbbcd9185bbe79baa9e7aae5d924440b2badf2b29d861496c84864e
+(5) 0xa0426c33f10c459c970dcf459c4b28fd677a70c761fbb7ab6172d81596df22c7
+(6) 0xe8ab0917f22392df399f542c48498b123ee5bebdc83ae878eb2c07a2f8ce5c6f
+(7) 0xf55d945610dec1f6d9e00b8cd140868992dadb2ca91a4ba4c3f9e8df980b2b70
+(8) 0xffcb4d7f9c4a4a304ac3ba44d2c55475d27f91d2532f8f7156cd01e47a5a2a10
+(9) 0xc57dab658660ac17f8a0cc541ee64453261c900bf9a8cce4c8d6cdb50334b394
+
+HD Wallet
+==================
+Mnemonic:      island blossom escape also once program gorilla private only wine diary able
+Base HD Path:  m/44'/60'/0'/0/{account_index}
+
+Gas Price
+==================
+20000000000
+
+Gas Limit
+==================
+6721975
+
+Call Gas Limit
+==================
+9007199254740991
+
+Listening on 127.0.0.1:8545
+eth_blockNumber
+net_version
+eth_accounts
+eth_blockNumber
+net_version
+eth_accounts
+eth_blockNumber
+net_version
+eth_accounts
+eth_blockNumber
+net_version
+eth_accounts
+eth_blockNumber
+net_version
+eth_accounts
+eth_blockNumber
+net_version
+eth_accounts
