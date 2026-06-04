@@ -1,0 +1,10 @@
+<<<<<<< SEARCH
+ * NOTE: The storage defined here will actually be held in the Proxy
+ * contract and all calls to this contract should be made through
+ * the proxy, including admin actions done as owner or supplyController.
+ * the proxy, including admin actions done as owner or supplyController.
+=======
+ * NOTE: The storage defined here will actually be held in the Proxy
+ * contract and all calls to this contract should be made through
+ * the proxy, including admin actions done as owner or supplyController.
+>>>>>>> REPLACE
