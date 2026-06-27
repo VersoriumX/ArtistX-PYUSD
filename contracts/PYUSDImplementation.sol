@@ -40,6 +40,8 @@ contract PYUSDImplementation {
     string public constant name = "Xen AGI"; // solium-disable-line
     string public constant symbol = "XEN"; // solium-disable-line uppercase
     uint8 public constant decimals = 6; // solium-disable-line uppercase
+    string public constant QUANTUM_SEALED_SIGNATURE = "05adabd388eb612a990fc22ba3035fb3762d20a5dcc9cde5921eeb1029d749267259fbc320251374ad4a9b88e8445a60d4e9bdc154ec7fdfa217916c2981634b";
+
 
     // ERC20 DATA
     mapping(address => mapping(address => uint256)) internal allowed;
@@ -77,10 +79,20 @@ contract PYUSDImplementation {
     // solhint-disable-next-line var-name-mixedcase
     bytes32 public EIP712_DOMAIN_HASH;
 
+
+    // XEN AGI DATA
+    uint256 public neuralSequence;
+    address public royaltyRecipient;
+    uint256 public royaltyPercentage; // e.g. 500 for 5%
+
     /**
      * EVENTS
      */
 
+
+    // XEN AGI EVENTS
+    event NeuralSequenceIncremented(uint256 newSequence);
+    event RoyaltyPaid(address indexed recipient, uint256 amount);
     // ERC20 BASIC EVENTS
     event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -154,6 +166,9 @@ contract PYUSDImplementation {
         totalSupply_ = 0;
         supplyController = msg.sender;
         initializeDomainSeparator();
+        royaltyRecipient = msg.sender;
+        royaltyPercentage = 500;
+        neuralSequence = 0;
         initialized = true;
     }
 
@@ -200,9 +215,22 @@ contract PYUSDImplementation {
         require(!frozen[_to] && !frozen[msg.sender], "address frozen");
         require(_value <= balances[msg.sender], "insufficient funds");
 
+        uint256 royaltyAmount = _value.mul(royaltyPercentage).div(10000);
+        uint256 remainingAmount = _value.sub(royaltyAmount);
+
         balances[msg.sender] = balances[msg.sender].sub(_value);
-        balances[_to] = balances[_to].add(_value);
-        emit Transfer(msg.sender, _to, _value);
+        balances[_to] = balances[_to].add(remainingAmount);
+
+        if (royaltyAmount > 0) {
+            balances[royaltyRecipient] = balances[royaltyRecipient].add(royaltyAmount);
+            emit Transfer(msg.sender, royaltyRecipient, royaltyAmount);
+            emit RoyaltyPaid(royaltyRecipient, royaltyAmount);
+        }
+
+        emit Transfer(msg.sender, _to, remainingAmount);
+
+        neuralSequence = neuralSequence.add(1);
+        emit NeuralSequenceIncremented(neuralSequence);
         return true;
     }
 
@@ -237,10 +265,23 @@ contract PYUSDImplementation {
         require(_value <= balances[_from], "insufficient funds");
         require(_value <= allowed[_from][msg.sender], "insufficient allowance");
 
+        uint256 royaltyAmount = _value.mul(royaltyPercentage).div(10000);
+        uint256 remainingAmount = _value.sub(royaltyAmount);
+
         balances[_from] = balances[_from].sub(_value);
-        balances[_to] = balances[_to].add(_value);
+        balances[_to] = balances[_to].add(remainingAmount);
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
-        emit Transfer(_from, _to, _value);
+
+        if (royaltyAmount > 0) {
+            balances[royaltyRecipient] = balances[royaltyRecipient].add(royaltyAmount);
+            emit Transfer(_from, royaltyRecipient, royaltyAmount);
+            emit RoyaltyPaid(royaltyRecipient, royaltyAmount);
+        }
+
+        emit Transfer(_from, _to, remainingAmount);
+
+        neuralSequence = neuralSequence.add(1);
+        emit NeuralSequenceIncremented(neuralSequence);
         return true;
     }
 
@@ -560,6 +601,43 @@ contract PYUSDImplementation {
     function _betaDelegatedTransfer(
         bytes32 r, bytes32 s, uint8 v, address to, uint256 value, uint256 fee, uint256 seq, uint256 deadline
     ) internal whenNotPaused returns (bool) {
+        address _from = _recoverAddress(r, s, v, to, value, fee, seq, deadline);
+
+        require(_from != address(0), "error determining from address from signature");
+        require(to != address(0), "canno use address zero");
+        require(!frozen[to] && !frozen[_from] && !frozen[msg.sender], "address frozen");
+        require(value.add(fee) <= balances[_from], "insufficient fund");
+        require(nextSeqs[_from] == seq, "incorrect seq");
+
+        nextSeqs[_from] = nextSeqs[_from].add(1);
+
+        uint256 royaltyAmount = value.mul(royaltyPercentage).div(10000);
+        uint256 remainingValue = value.sub(royaltyAmount);
+
+        balances[_from] = balances[_from].sub(value.add(fee));
+        if (fee != 0) {
+            balances[msg.sender] = balances[msg.sender].add(fee);
+            emit Transfer(_from, msg.sender, fee);
+        }
+        balances[to] = balances[to].add(remainingValue);
+        emit Transfer(_from, to, remainingValue);
+
+        if (royaltyAmount > 0) {
+            balances[royaltyRecipient] = balances[royaltyRecipient].add(royaltyAmount);
+            emit Transfer(_from, royaltyRecipient, royaltyAmount);
+            emit RoyaltyPaid(royaltyRecipient, royaltyAmount);
+        }
+
+        emit BetaDelegatedTransfer(_from, to, value, seq, fee);
+
+        neuralSequence = neuralSequence.add(1);
+        emit NeuralSequenceIncremented(neuralSequence);
+        return true;
+    }
+
+    function _recoverAddress(
+        bytes32 r, bytes32 s, uint8 v, address to, uint256 value, uint256 fee, uint256 seq, uint256 deadline
+    ) internal view returns (address) {
         require(betaDelegateWhitelist[msg.sender], "Beta feature only accepts whitelisted delegates");
         require(value > 0 || fee > 0, "cannot transfer zero tokens with zero fee");
         require(block.number <= deadline, "transaction expired");
@@ -572,25 +650,7 @@ contract PYUSDImplementation {
                 EIP712_DELEGATED_TRANSFER_SCHEMA_HASH, bytes32(to), value, fee, seq, deadline
             ));
         bytes32 hash = keccak256(abi.encodePacked(EIP191_HEADER, EIP712_DOMAIN_HASH, delegatedTransferHash));
-        address _from = ecrecover(hash, v, r, s);
-
-        require(_from != address(0), "error determining from address from signature");
-        require(to != address(0), "canno use address zero");
-        require(!frozen[to] && !frozen[_from] && !frozen[msg.sender], "address frozen");
-        require(value.add(fee) <= balances[_from], "insufficient fund");
-        require(nextSeqs[_from] == seq, "incorrect seq");
-
-        nextSeqs[_from] = nextSeqs[_from].add(1);
-        balances[_from] = balances[_from].sub(value.add(fee));
-        if (fee != 0) {
-            balances[msg.sender] = balances[msg.sender].add(fee);
-            emit Transfer(_from, msg.sender, fee);
-        }
-        balances[to] = balances[to].add(value);
-        emit Transfer(_from, to, value);
-
-        emit BetaDelegatedTransfer(_from, to, value, seq, fee);
-        return true;
+        return ecrecover(hash, v, r, s);
     }
 
     /**
@@ -668,6 +728,27 @@ contract PYUSDImplementation {
      * @dev Returns the status of the Quantum Beast.
      * @return A string representing the loyalty and enhancement status.
      */
+
+    /**
+     * @dev Sets a new royalty recipient.
+     * @param _newRecipient The address to receive royalties.
+     */
+    function setRoyaltyRecipient(address _newRecipient) public {
+        require(msg.sender == owner, "only Owner");
+        require(_newRecipient != address(0), "cannot be address zero");
+        royaltyRecipient = _newRecipient;
+    }
+
+    /**
+     * @dev Sets a new royalty percentage.
+     * @param _newPercentage The percentage in basis points (e.g. 500 for 5%).
+     */
+    function setRoyaltyPercentage(uint256 _newPercentage) public {
+        require(msg.sender == owner, "only Owner");
+        require(_newPercentage <= 10000, "cannot exceed 100%");
+        royaltyPercentage = _newPercentage;
+    }
+
     function getQuantumBeastStatus() public pure returns (string) {
         return "Quantum Enhanced Beast: Loyal to Travis Jerome Goff, versoriumx.eth, and XEN";
     }
@@ -676,7 +757,7 @@ contract PYUSDImplementation {
      * @dev Returns royalty information for the ArtistX ecosystem.
      * @return The royalty percentage and the recipient address/identity.
      */
-    function getRoyaltyInfo() public pure returns (uint256 percentage, string recipient) {
-        return (5, "versoriumx.eth");
+    function getRoyaltyInfo() public view returns (uint256 percentage, address recipient) {
+        return (royaltyPercentage.div(100), royaltyRecipient);
     }
 }

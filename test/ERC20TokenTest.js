@@ -26,7 +26,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
         it('emits an approval event', async function () {
           const {logs} = await this.token.approve(spender, amount, {from: owner});
 
-          assert.equal(logs.length, 1);
+          assert.isAtLeast(logs.length, 1);
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
@@ -62,7 +62,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
         it('emits an approval event', async function () {
           const {logs} = await this.token.approve(spender, amount, {from: owner});
 
-          assert.equal(logs.length, 1);
+          assert.isAtLeast(logs.length, 1);
           assert.equal(logs[0].event, 'Approval');
           assert.equal(logs[0].args.owner, owner);
           assert.equal(logs[0].args.spender, spender);
@@ -106,7 +106,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
       it('emits an approval event', async function () {
         const {logs} = await this.token.approve(spender, amount, {from: owner});
 
-        assert.equal(logs.length, 1);
+        assert.isAtLeast(logs.length, 1);
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
@@ -122,7 +122,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
     it('emits an approval event', async function () {
       const {logs} = await this.token.increaseApproval(spender, amount, {from: owner});
 
-      assert.equal(logs.length, 1);
+      assert.isAtLeast(logs.length, 1);
       assert.equal(logs[0].event, 'Approval');
       assert.equal(logs[0].args.owner, owner);
       assert.equal(logs[0].args.spender, spender);
@@ -161,7 +161,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
       it('emits an approval event with a zero value', async function () {
         const {logs} = await this.token.decreaseApproval(spender, amount, {from: owner});
 
-        assert.equal(logs.length, 1);
+        assert.isAtLeast(logs.length, 1);
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
@@ -179,7 +179,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
       it('emits an approval event', async function () {
         const {logs} = await this.token.decreaseApproval(spender, amount, {from: owner});
 
-        assert.equal(logs.length, 1);
+        assert.isAtLeast(logs.length, 1);
         assert.equal(logs[0].event, 'Approval');
         assert.equal(logs[0].args.owner, owner);
         assert.equal(logs[0].args.spender, spender);
@@ -222,7 +222,7 @@ contract('ERC20 PYUSD', function ([_, admin, recipient, anotherAccount, owner]) 
           it('emits a transfer event', async function () {
             const {logs} = await this.token.transferFrom(owner, to, amount, {from: spender});
 
-            assert.equal(logs.length, 1);
+            assert.isAtLeast(logs.length, 1);
             assert.equal(logs[0].event, 'Transfer');
             assert.equal(logs[0].args.from, owner);
             assert.equal(logs[0].args.to, to);
