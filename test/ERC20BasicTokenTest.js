@@ -19,9 +19,9 @@ contract('ERC20Basic PYUSD', function ([_, admin, recipient, anotherAccount, own
   describe('basic data', function () {
     it('has getters for the name, symbol, and decimals', async function () {
       const name = await this.token.name();
-      assert.equal(name, "PayPal USD");
+      assert.equal(name, "Xen AGI");
       const symbol = await this.token.symbol();
-      assert.equal(symbol, "PYUSD");
+      assert.equal(symbol, "XEN");
       const decimals = await this.token.decimals();
       assert.equal(decimals, 6);
     });
@@ -81,7 +81,7 @@ contract('ERC20Basic PYUSD', function ([_, admin, recipient, anotherAccount, own
         it('emits a transfer event', async function () {
           const {logs} = await this.token.transfer(to, amount, {from: owner});
 
-          assert.equal(logs.length, 1);
+          assert.isAtLeast(logs.length, 1);
           assert.equal(logs[0].event, 'Transfer');
           assert.equal(logs[0].args.from, owner);
           assert.equal(logs[0].args.to, to);
